@@ -3,4 +3,5 @@ This repository contains advanced alogithms for searching , sorting and other op
 Preffered languages - <b>c++</b> and <b>c</b>.<br>
 Some of the Algorithms included are:-<br>
 1).Wavesort.<br>
-2).Insertionsort(reimplemented in more optimized way.)
+2).Insertionsort(reimplemented in more optimized way).<br>
+3).HuffmanCoding(A greedy algorihmic implementation).
