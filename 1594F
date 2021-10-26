@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+ll INF = 1e9+7;
+ll MOD = 998244353;
+typedef pair<ll,ll> ii;
+#define iii pair<ii,ll>
+#define f(i,a,b) for(int i = a;i < b;i++)
+#define pb push_back
+#define vll vector<ll>
+#define F first
+#define S second
+#define all(x) (x).begin(), (x).end()
+int main(void){
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    int t;
+    cin>>t;
+    while(t--){
+        ll n,k,s;
+        cin>>s>>n>>k;
+        if(s == k){
+            cout<<"YES\n";
+        }
+        else if(k > s){
+            cout<<"NO\n";
+        }
+        else{
+            ll posa = s+k;
+            ll l = s-k+1,r = s;
+            ll siz = r - l + 1;
+            ll a = 0,b = 0;
+            ll num = (s / k) * k;
+            b = r - num + 1;
+            a = siz - b;
+            if((s / k) % 2 == 1){
+                posa -= b;
+            }
+            else{
+                posa -= a;
+            }
+            if((2 * n + 1) > posa){
+                cout<<"YES\n";
+            }
+            else{
+                cout<<"NO\n";
+            }
+        }
+    }
+}
