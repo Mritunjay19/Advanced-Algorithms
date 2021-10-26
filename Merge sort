@@ -1,0 +1,98 @@
+Sorting is arranging the elements into increasing or decreasing order.
+Merge sort is one of the fast sorting algorithm . It is a Divide and Conquer algorithm. It divides the input array into two halves, calls itself for the two halves, and then merges the two sorted halves The sub-lists are divided again and again into halves until the list cannot be divided further. Then we combine the pair of one element lists into two-element lists, sorting them in the process. The sorted two-element pairs is merged into the four-element lists, and so on until we get the sorted list.We have define the merge() function to merge the two halves.
+//Code in C on merge sort
+
+#include<stdio.h>
+int b[10][arr[10];
+/* merge function */
+void merge(int low,int mid ,int high)
+{
+ int i=low;
+ int j=mid+1;
+ int h=low;
+ int k;
+ while((h<=mid) &&(j<=high))
+  {
+  if(arr[h]<=arr[j])
+  {
+   b[i]=arr[h];
+   h=h+1;
+  }
+  else
+  {
+    b[i]=arr[j];
+    j=j+1;
+  }
+  i=i+1;
+  }
+ if(h>mid) 
+ {
+  for(k=j;k<=high;k++)
+    {
+    b[i]=arr[k];
+    i=i+1;
+    }
+ } 
+ else
+  for(k=h;k<=mid;k++)
+  {
+   b[i]=arr[k];
+   i=i+1;
+  } 
+  for(k=low;k<=high;k++)
+  {
+    arr[k]=b[k];
+  }
+}  
+/* mergesort function */
+void mergesort(int low,int high)
+{
+ int i;
+ if(low<high)
+ {
+  int mid;
+  mid=(low+high)/2;
+  mergesort(low,mid);
+  mergesort(mid+1,high);
+  merge(low,mid,high);
+ }
+ for(i=low;i<=high;i++)
+ {
+   printf("%d",arr[i]);
+ }
+}
+
+//Main function
+void main()
+{
+  int i,n,j;
+  printf("Enter no of element in an array");
+  scanf("%d",&n);
+  printf("Enter %d elements ",n);
+  for(i=0;i<n;i++)
+   {
+    scanf("%d",arr[i]);
+   }
+  for(j=0;j<=n-1;j++)
+  {
+    printf("%d",arr[j]);
+  }
+  
+  mergesort(0,n-1);
+ }
+/*Code end*/
+Output
+ Enter no. of element
+ 5
+ Enter elements
+ 2 9 6 1 0
+ printf("Elements after sorting are:");
+ 0 1 2 6 9
+  
+//Time Complexity of merge sort
+  Best case :It occur when array is already sorted .The time complexity in this case is O(nlogn)
+  Average case :O(nlogn)
+  Worst case:O(nlogn)
+//Space complexity of merge sort
+  The space complexity of merge sort is O(n). It is because, in merge sort, an extra variable is required for swapping.
+  
