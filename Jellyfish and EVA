@@ -1,0 +1,114 @@
+#include <iostream>
+#include "vector"
+#include "algorithm"
+#include "numeric"
+#include "climits"
+#include "iomanip"
+#include "bitset"
+#include "cmath"
+#include "map"
+#include "deque"
+#include "array"
+#include "set"
+#include "queue"
+#define all(x) x.begin(), x.end()
+using namespace std;
+ 
+void solvestp() {
+    int a, b, c, d, e;
+    cin >> a >> b >> c >> d >> e;
+    queue<array<int, 3>> que;
+    que.push({0, a, b});
+    set<pair<int, int>> ex;
+    ex.insert({a, b});
+    while (!que.empty()) {
+        auto [c1, a, b] = que.front();
+        cout << bitset<8>(a) << ' ' << bitset<8>(b) << endl;
+        //if (a == c and b == d) {
+        //    cout << c1 << '\n';return;
+        //}
+        int a1, b1;
+        que.pop();
+       // if ((b & c) == b) {
+            a1 = (a & b);
+            b1 = b;
+            if (ex.find({a1, b1}) == ex.end()) {
+                ex.insert({a1, b1});
+                que.push({c1+1, a1, b1});
+            }
+       // }
+        //if ((b | c) == c) {
+            a1 = (a | b);
+            b1 = b;
+            if (ex.find({a1, b1}) == ex.end()) {
+                ex.insert({a1, b1});
+                que.push({c1 + 1, a1, b1});
+            }
+       // }
+        a1 = a;
+        b1 = b ^ a;
+        if (ex.find({a1, b1}) == ex.end()) {
+            ex.insert({a1, b1});
+            que.push({c1 + 1, a1, b1});
+        }
+        a1 = a;
+        b1 = b ^ e;
+        if (ex.find({a1, b1}) == ex.end()) {
+            ex.insert({a1, b1});
+            que.push({c1 + 1, a1, b1});
+        }
+    }
+    cout << ex.size() << '\n';
+}
+vector<vector<double>> prb;
+void init() {
+    int N = 5005;
+    prb.assign(N, {});
+    prb[1] = {1};
+    prb[2] = {0.5, 0};
+    for (int i = 3; i < N; ++i) {
+        prb[i].assign(i, {});
+        prb[i][0] = 1. / i;
+        for (int j = 1; j < i; ++j) {
+            if (j == 1)
+                prb[i][j] = ((i-j-1) * prb[i-2][j-1]) / i;
+            else
+                prb[i][j] = ((i-j-1) * prb[i-2][j-1] + (j-1) * prb[i-2][j-2]) / i;
+        }
+    }
+}
+void solve() {
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> g(n);
+    for (int i = 0; i < m; ++i) {
+        int a, b;
+        cin >> a >> b;a--;b--;
+        g[a].push_back(b);
+    }
+    vector<double> rebs(n);
+    rebs[n-1] = 1;
+    for (int i = n-2; i >= 0; --i) {
+        vector<double> mymy;
+        for (auto j : g[i])
+            mymy.push_back(rebs[j]);
+        sort(all(mymy));reverse(all(mymy));
+        double rss = 0;
+        for (int j = 0; j < mymy.size(); ++j) {
+            rss += mymy[j] * prb[mymy.size()][j];
+        }
+        rebs[i] = rss;
+        //cout << rebs[i] << ' ' << prb[2][0] << '\n';
+    }
+    cout << setprecision(20) << rebs[0] << '\n';
+}
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+    int t;
+    init();
+    cin >> t;
+    while (t--) {
+        solve();
+    }
+}
