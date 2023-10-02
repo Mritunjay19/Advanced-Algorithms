@@ -1,0 +1,124 @@
+#include <iostream>
+#include "vector"
+#include "algorithm"
+#include "numeric"
+#include "climits"
+#include "iomanip"
+#include "bitset"
+#include "cmath"
+#include "map"
+#include "deque"
+#include "array"
+#include "set"
+#include "queue"
+#define all(x) x.begin(), x.end()
+using namespace std;
+map<array<int, 3>, vector<array<int, 3>>> mp;
+void solve(int a, int b, int e) {
+    queue<array<int, 3>> que;
+    vector<array<int, 3>> res;
+    que.push({0, a, b});
+    set<pair<int, int>> ex;
+    ex.insert({a, b});
+    int mxc = 0;
+    while (!que.empty()) {
+        auto [c1, a, b] = que.front();mxc = max(c1, mxc);
+        res.push_back({a, b, c1});
+        //cout << bitset<8>(a) << ' ' << bitset<8>(b) << ' ' << c1 << endl;
+        //if (a == c and b == d) {
+        //    cout << c1 << '\n';return;
+        //}
+        int a1, b1;
+        que.pop();
+        // if ((b & c) == b) {
+        a1 = (a & b);
+        b1 = b;
+        if (ex.find({a1, b1}) == ex.end()) {
+            ex.insert({a1, b1});
+            que.push({c1+1, a1, b1});
+        }
+        // }
+        //if ((b | c) == c) {
+        a1 = (a | b);
+        b1 = b;
+        if (ex.find({a1, b1}) == ex.end()) {
+            ex.insert({a1, b1});
+            que.push({c1 + 1, a1, b1});
+        }
+        // }
+        a1 = a;
+        b1 = b ^ a;
+        if (ex.find({a1, b1}) == ex.end()) {
+            ex.insert({a1, b1});
+            que.push({c1 + 1, a1, b1});
+        }
+        a1 = a;
+        b1 = b ^ e;
+        if (ex.find({a1, b1}) == ex.end()) {
+            ex.insert({a1, b1});
+            que.push({c1 + 1, a1, b1});
+        }
+    }
+    sort(all(res));
+    mp[{a, b, e}] = res;
+}
+int getval(int d, int e, vector<array<int, 3>> &a) {
+    int ind = lower_bound(all(a), array<int, 3>{d, e, - 1}) - a.begin();
+    if (ind == a.size())
+        return -1;
+    if (a[ind][0] != d or a[ind][1] != e)
+        return -1;
+    return a[ind][2];
+}
+void solvestp() {
+    int a = rand() % (int)1e9, b = rand() % (int)1e9, c = rand() % (int)1e9, d = rand() % (int)1e9, e = rand() % (int)1e9;
+    cin >> a >> b >> c >> d >> e;
+    vector<pair<int, int>> bebra(7, {-1, -1});
+    vector<array<int, 3>> trg(7);
+    for (int i = 0; i < 30; ++i) {
+        bool a1 = (1 << i) & a;
+        bool b1 = (1 << i) & b;
+        bool c1 = (1 << i) & c;
+        bool d1 = (1 << i) & d;
+        bool e1 = (1 << i) & e;
+        int res = 4 * a1 + 2 * b1 + e1 - 1;
+        if (res == -1) {
+            if (c1 != 0 or d1 != 0) {
+                cout << "-1\n";return;
+            }
+        } else {
+            //cout << res << " " << a1 << ' ' << b1 << ' ' << c1 << ' ' << d1 << ' ' << e1 << '\n';
+            trg[res] = {a1, b1, e1};
+            if (bebra[res].first == -1) {
+                bebra[res] = {c1, d1};
+            }
+            if (bebra[res] != pair<int, int>{c1, d1}) {
+                cout << "-1\n";return;
+            }
+        }
+    }
+    int a2=0,b2=0,c2=0,d2=0,e2=0;
+    for (int i = 0; i < 7; ++i) {
+        if (bebra[i].first != -1) {
+            a2 += trg[i][0] << i;
+            b2 += trg[i][1] << i;
+            e2 += trg[i][2] << i;
+            c2 += bebra[i].first << i;
+            d2 += bebra[i].second << i;
+        }
+    }
+    //cout << a2 << ' ' << b2 << ' ' << e2 << ' ' << c2 << ' ' << d2 << endl;
+    if (mp[{a2, b2, e2}].empty())
+        solve(a2,b2,e2);
+    cout << getval(c2, d2, mp[{a2, b2, e2}]) << '\n';
+}
+ 
+signed main() {
+    ios::sync_with_stdio(0);
+    cin.tie(0);cout.tie(0);
+    int t;
+    cin >> t;
+    while (t--) {
+        solvestp();
+    }
+}
