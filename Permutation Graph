@@ -1,0 +1,83 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+#include <algorithm>
+#include <cassert>
+#include <set>
+ 
+using namespace std;
+ 
+int sq(int x) { return x * x; }
+ 
+int main() {
+  int t;
+  cin >> t;
+  for (int tc = 0; tc < t; ++tc) {
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    vector<int> b(n+1);
+    for (auto& x : a) cin >> x;
+    for (int i = 0; i < n; ++i) {
+      b[a[i]] = i;
+    }
+ 
+    vector<pair<int,int>> mins, maxs;
+    mins.emplace_back(a[0], 0);
+    maxs.emplace_back(a[0], 0);
+    int d = 1e9;
+    for (int i = 1; i < n; ++i) {
+      int p = a[i-1];
+      int t = 0;
+      if (a[i] > p) {
+        while (maxs.size() > 0 && a[i] > maxs.back().first) {
+          maxs.pop_back();
+        }
+        // cerr << "last_max: " << maxs.back().first << endl;
+        if (maxs.empty()) {
+          t = 0;
+          maxs.emplace_back(a[0], 0);
+        } else {
+          t = b[maxs.back().first];
+        }
+        auto min_min  = mins.back();
+        while (!mins.empty() && b[mins.back().first] >= t) {
+//          std::cerr << "remove min: " << mins.back().first << " t: " << t << endl;
+          if (mins.back().first < min_min.first) {
+            min_min = mins.back();
+          }
+          mins.pop_back();
+        }
+//        std::cerr << "back min: " << min_min.first << endl;
+        mins.push_back(min_min);
+        maxs.emplace_back(a[i], mins.back().second + 1);
+        //cerr << "new max: " << a[i] << " prev min: " << mins.back().first << " d: " << mins.back().second + 1 << endl;
+      } else {
+        while (mins.size() > 0 && a[i] < mins.back().first) {
+          mins.pop_back();
+        }
+        if (mins.empty()) {
+          t = 0;
+          mins.emplace_back(a[0], 0);
+        } else {
+          t = b[mins.back().first];
+        }
+        auto max_max  = maxs.back();
+        while (!maxs.empty() && b[maxs.back().first] >= t) {
+          //std::cerr << "remove max: " << maxs.back().first << " t: " << t << endl;
+          if (maxs.back().first > max_max.first) {
+            max_max = maxs.back();
+          }
+          maxs.pop_back();
+        }
+//        std::cerr << "back max: " << max_max.first << endl;
+        maxs.push_back(max_max);
+//        cerr << "new min: " << a[i] << " prev max: " << maxs.back().first << " d: " << maxs.back().second + 1 << endl;
+        mins.emplace_back(a[i], maxs.back().second + 1);
+      }
+    }
+    d = a.back() == maxs.back().first ? maxs.back().second : mins.back().second;
+    cout << d << '\n';
+  }
+}
