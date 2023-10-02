@@ -1,0 +1,73 @@
+include <iostream>
+#include <cmath>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <random>
+#include <stack>
+#include <queue>
+#include <deque>
+#include <algorithm>
+#include <numeric>
+#include <set>
+#include <map>
+#include <string>
+#include <tuple>
+#include <vector>
+#include <cassert>
+#include <functional>
+//#define int long long
+using namespace std;
+ 
+double coords[5005][5005];
+ 
+void solve()
+{
+    int n, m; cin >> n >> m;
+    vector<vector<int>> adj(n+1);
+    for (int j = 0; j < m; j++) {
+        int u, v; cin >> u >> v;
+        adj[u].push_back(v);
+    }
+    vector<double> dp(n+1); dp[n] = 1;
+    for (int i = n - 1; i >= 1; i--) {
+        if (adj[i].empty()) {
+            dp[i] = 0;
+            continue;
+        }
+        sort(adj[i].begin(), adj[i].end(), [&](int a, int b){return dp[a] > dp[b];});
+        for (int j = 0; j < (int)adj[i].size(); j++) {
+            dp[i] += dp[adj[i][j]] * coords[adj[i].size()][j+1];
+        }
+    }
+    cout.precision(12);
+    cout << fixed;
+    cout << dp[1] << '\n';
+}
+ 
+signed main()
+{
+    #ifndef ONLINE_JUDGE
+    freopen("in.txt", "r", stdin);
+    freopen("out.txt", "w", stdout);
+    #endif
+    for (int p = 1; p <= 5000; p += 2) {
+        for (int i = 1; i <= p; i++) coords[p][i] = (double)1/p;
+    }
+    for (int p = 2; p <= 5000; p += 2) {
+        for (int i = 1; i <= p; i++) {
+            if (i == 1) {
+                coords[p][i] = (double)1/p;
+            }
+            else if (i == p) {
+                coords[p][i] = 0;
+            }
+            else {
+                coords[p][i] = (double)(i-2)/p * coords[p-2][i-2] + (double)(p-i)/p * coords[p-2][i-1];
+            }
+        }
+    }
+    ios::sync_with_stdio(false); cin.tie(0); cout.tie(0);
+    int T; cin >> T; while (T--)
+    solve();
+}
